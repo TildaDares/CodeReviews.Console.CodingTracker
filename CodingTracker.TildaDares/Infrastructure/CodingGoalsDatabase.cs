@@ -8,16 +8,16 @@ namespace CodingTracker.TildaDares.Infrastructure;
 
 public class CodingGoalsDatabase
 {
-    private readonly string ConnectionString = ConfigurationManager.ConnectionStrings["CodingGoalDB"].ConnectionString;
+    private readonly string _connectionString = ConfigurationManager.ConnectionStrings["CodingGoalDB"].ConnectionString;
     
     public CodingGoalsDatabase()
     {
-        CreateCodingGoalDB();
+        CreateCodingGoalDb();
     }
 
     public void InsertCodingGoal(CodingGoal codingGoal)
     {
-        using var connection = new SqliteConnection(this.ConnectionString);
+        using var connection = new SqliteConnection(_connectionString);
         try
         {
             connection.Open();
@@ -37,7 +37,7 @@ public class CodingGoalsDatabase
 
     public CodingGoal GetCodingGoal(CodingGoal codingGoal)
     {
-        using var connection = new SqliteConnection(this.ConnectionString);
+        using var connection = new SqliteConnection(_connectionString);
         CodingGoal goal = null;
         try
         {
@@ -59,7 +59,7 @@ public class CodingGoalsDatabase
     
     public List<CodingGoal> GetAllCodingGoals()
     {
-        using var connection = new SqliteConnection(this.ConnectionString);
+        using var connection = new SqliteConnection(_connectionString);
         var goals = new List<CodingGoal>();
         try
         {
@@ -81,8 +81,7 @@ public class CodingGoalsDatabase
 
     public void UpdateCodingGoal(CodingGoal codingGoal)
     {
-        using var connection = new SqliteConnection(this.ConnectionString);
-        CodingGoal goal = null;
+        using var connection = new SqliteConnection(_connectionString);
         try
         {
             connection.Open();
@@ -102,8 +101,7 @@ public class CodingGoalsDatabase
 
     public void DeleteCodingGoal(int id)
     {
-        using var connection = new SqliteConnection(this.ConnectionString);
-        CodingGoal goal = null;
+        using var connection = new SqliteConnection(_connectionString);
         try
         {
             connection.Open();
@@ -123,7 +121,7 @@ public class CodingGoalsDatabase
     
     public long CountCodingGoals()
     {
-        using var connection = new SqliteConnection(this.ConnectionString);
+        using var connection = new SqliteConnection(_connectionString);
         var count = 0;
         try
         {
@@ -143,9 +141,9 @@ public class CodingGoalsDatabase
         return count;
     }
     
-    private void CreateCodingGoalDB()
+    private void CreateCodingGoalDb()
     {
-        using var connection = new SqliteConnection(ConnectionString);
+        using var connection = new SqliteConnection(_connectionString);
         try
         {
             connection.Open();
@@ -162,7 +160,7 @@ public class CodingGoalsDatabase
             
             if (count == 0)
             {
-                SeedCodingGoalDB();
+                SeedCodingGoalDb();
             }
         }
         catch (SqliteException e)
@@ -175,9 +173,9 @@ public class CodingGoalsDatabase
         }
     }
     
-    private void SeedCodingGoalDB()
+    private void SeedCodingGoalDb()
     {
-        using var connection = new SqliteConnection(ConnectionString);
+        using var connection = new SqliteConnection(_connectionString);
         try
         {
             connection.Open();

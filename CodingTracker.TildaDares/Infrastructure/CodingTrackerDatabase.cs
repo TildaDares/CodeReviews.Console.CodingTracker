@@ -8,16 +8,16 @@ namespace CodingTracker.TildaDares.Infrastructure;
 
 public class CodingTrackerDatabase
 {
-    private readonly string ConnectionString = ConfigurationManager.ConnectionStrings["CodingTrackerDB"].ConnectionString;
+    private readonly string _connectionString = ConfigurationManager.ConnectionStrings["CodingTrackerDB"].ConnectionString;
     
     public CodingTrackerDatabase()
     {
-        CreateCodingTrackerDB();
+        CreateCodingTrackerDb();
     }
 
     public void InsertCodingSession(CodingSession codingSession)
     {
-        using var connection = new SqliteConnection(this.ConnectionString);
+        using var connection = new SqliteConnection(_connectionString);
         try
         {
             connection.Open();
@@ -37,7 +37,7 @@ public class CodingTrackerDatabase
 
     public CodingSession GetCodingSession(int id)
     {
-        using var connection = new SqliteConnection(this.ConnectionString);
+        using var connection = new SqliteConnection(_connectionString);
         CodingSession session = null;
         try
         {
@@ -59,7 +59,7 @@ public class CodingTrackerDatabase
 
     public CodingStats GetSumOfCodingSessionDuration(CodingSessionFilter filter)
     {
-        using var connection = new SqliteConnection(this.ConnectionString);
+        using var connection = new SqliteConnection(_connectionString);
         CodingStats stats = null;
         try
         {
@@ -69,8 +69,10 @@ public class CodingTrackerDatabase
             {
                 sql += " WHERE DATETIME(startTime) >= DATETIME(@StartTime) AND DATETIME(endTime) <= DATETIME(@EndTime)";
             }
-            
-            stats = connection.QuerySingle<CodingStats>(sql, new { StartTime = filter.StartTime.Value, EndTime = filter.EndTime.Value });
+
+            if (filter.StartTime != null)
+                stats = connection.QuerySingle<CodingStats>(sql,
+                    new { StartTime = filter.StartTime.Value, EndTime = filter.EndTime.Value });
         }
         catch (SqliteException e)
         {
@@ -86,7 +88,7 @@ public class CodingTrackerDatabase
     
     public List<CodingSession> GetAllCodingSessions(CodingSessionFilter? filter = null)
     {
-        using var connection = new SqliteConnection(this.ConnectionString);
+        using var connection = new SqliteConnection(_connectionString);
         var sessions = new List<CodingSession>();
         try
         {
@@ -113,8 +115,7 @@ public class CodingTrackerDatabase
 
     public void UpdateCodingSession(CodingSession codingSession)
     {
-        using var connection = new SqliteConnection(this.ConnectionString);
-        CodingSession session = null;
+        using var connection = new SqliteConnection(_connectionString);
         try
         {
             connection.Open();
@@ -134,13 +135,12 @@ public class CodingTrackerDatabase
 
     public void DeleteCodingSession(int id)
     {
-        using var connection = new SqliteConnection(this.ConnectionString);
-        CodingSession session = null;
+        using var connection = new SqliteConnection(_connectionString);
         try
         {
             connection.Open();
             const string sql = "DELETE FROM codingTracker WHERE id = @Id";
-            var rowsAffected = connection.Execute(sql, new {@Id = id});
+            var rowsAffected = connection.Execute(sql, new {Id = id});
             AnsiConsole.MarkupLine($"[green]{rowsAffected} row(s) deleted.[/]");
         }
         catch (SqliteException e)
@@ -155,7 +155,7 @@ public class CodingTrackerDatabase
     
     public long CountCodingSessions()
     {
-        using var connection = new SqliteConnection(this.ConnectionString);
+        using var connection = new SqliteConnection(_connectionString);
         var count = 0;
         try
         {
@@ -175,9 +175,9 @@ public class CodingTrackerDatabase
         return count;
     }
     
-    private void CreateCodingTrackerDB()
+    private void CreateCodingTrackerDb()
     {
-        using var connection = new SqliteConnection(ConnectionString);
+        using var connection = new SqliteConnection(_connectionString);
         try
         {
             connection.Open();
@@ -194,7 +194,7 @@ public class CodingTrackerDatabase
             
             if (count == 0)
             {
-                SeedCodingTrackerDB();
+                SeedCodingTrackerDb();
             }
         }
         catch (SqliteException e)
@@ -207,9 +207,9 @@ public class CodingTrackerDatabase
         }
     }
     
-    private void SeedCodingTrackerDB()
+    private void SeedCodingTrackerDb()
     {
-        using var connection = new SqliteConnection(ConnectionString);
+        using var connection = new SqliteConnection(_connectionString);
         try
         {
             connection.Open();
@@ -219,8 +219,7 @@ public class CodingTrackerDatabase
             {
                 var startTime = Utilities.GetRandomDateTime(rand);
                 var endTime = Utilities.GetRandomDateTime(rand, startTime);
-                var sql =
-                    "INSERT INTO codingTracker(startTime, endTime, duration) VALUES (@StartTime, @EndTime, @Duration)";
+                const string sql = "INSERT INTO codingTracker(startTime, endTime, duration) VALUES (@StartTime, @EndTime, @Duration)";
                 
                var codingSession = new CodingSession(startTime, endTime);
                connection.Execute(sql, codingSession);

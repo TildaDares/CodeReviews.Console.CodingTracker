@@ -6,7 +6,7 @@ namespace CodingTracker.TildaDares.Services;
 
 public static class ValidationService
 {
-    private static readonly string DateFormat = ConfigurationManager.AppSettings["dateFormat"];
+    private static readonly string? DateFormat = ConfigurationManager.AppSettings["dateFormat"];
     public static Validator IsDateValid(string dateString, DateTime? minRange = null, DateTime? maxRange = null)
     {
         minRange ??= DateTime.MinValue;

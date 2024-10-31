@@ -10,7 +10,6 @@ public static class Extensions
         if (field == null)
             return enumValue.ToString();
 
-        var attributes = field.GetCustomAttributes(typeof(DescriptionAttribute), false);
         if (Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) is DescriptionAttribute attribute)
         {
             return attribute.Description;

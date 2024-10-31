@@ -12,7 +12,7 @@ public static class Input
         var validator = new Validator();
         AnsiConsole.Prompt(
             new TextPrompt<string>(message)
-                .Validate((dateString) =>
+                .Validate(dateString =>
                 {
                     validator = ValidationService.IsDateValid(dateString, minRange, maxRange);
                     return validator.IsValid ? ValidationResult.Success() : ValidationResult.Error(validator.Message); 

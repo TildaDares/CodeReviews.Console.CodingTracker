@@ -7,7 +7,7 @@ using Spectre.Console;
 
 namespace CodingTracker.TildaDares.UserInterface;
 
-public class GoalMenu(CodingTrackerDatabase _trackerDatabase)
+public class GoalMenu(CodingTrackerDatabase trackerDatabase)
 {
    private readonly CodingGoalsDatabase _goalsDatabase = new();
 
@@ -64,7 +64,7 @@ public class GoalMenu(CodingTrackerDatabase _trackerDatabase)
       var confirmation = Input.ConfirmPrompt("[yellow]Save coding goal to database?[/]");
       if (!confirmation) return;
 
-      var codingGoal = new CodingGoal() { StartTime = startTime, EndTime = endTime, TotalHoursGoal = goalHours };
+      var codingGoal = new CodingGoal { StartTime = startTime, EndTime = endTime, TotalHoursGoal = goalHours };
       _goalsDatabase.InsertCodingGoal(codingGoal);
       Input.ContinueMenu();
    }
@@ -80,7 +80,7 @@ public class GoalMenu(CodingTrackerDatabase _trackerDatabase)
     
       GetCodingGoals();
       var id = AnsiConsole.Ask<int>("Enter the coding goal ID you wish to retrieve:");
-      var goal = new CodingGoal() { Id = id };
+      var goal = new CodingGoal { Id = id };
       goal = _goalsDatabase.GetCodingGoal(goal);
 
       if (goal == null)
@@ -97,12 +97,13 @@ public class GoalMenu(CodingTrackerDatabase _trackerDatabase)
       };
       
       var filter = new CodingSessionFilter { StartTime = goal.StartTime, EndTime = goal.EndTime };
-      var stats = _trackerDatabase.GetSumOfCodingSessionDuration(filter);
+      var stats = trackerDatabase.GetSumOfCodingSessionDuration(filter);
       var table = new Table();
       BuildTableHeader(table);
       BuildTableRows(table, goal);
       
-      AnsiConsole.Render(table);
+      AnsiConsole.Write(panel);
+      AnsiConsole.Write(table);
       DisplayCodingGoalDetails(goal, stats.TotalHours);
       Input.ContinueMenu();
    }
@@ -147,7 +148,7 @@ public class GoalMenu(CodingTrackerDatabase _trackerDatabase)
       
       GetCodingGoals();
       var id = AnsiConsole.Ask<int>("Enter the coding goal ID you wish to update:");
-      var goal = new CodingGoal() { Id = id };
+      var goal = new CodingGoal { Id = id };
       goal = _goalsDatabase.GetCodingGoal(goal);
 
       if (goal == null)
@@ -166,7 +167,7 @@ public class GoalMenu(CodingTrackerDatabase _trackerDatabase)
       var confirmation = Input.ConfirmPrompt("[yellow]Save updated coding goal to database?[/]");
       if (!confirmation) return;
       
-      var updatedCodingGoal = new CodingGoal() { Id = goal.Id, EndTime = endTime, TotalHoursGoal = goalHours };
+      var updatedCodingGoal = new CodingGoal { Id = goal.Id, EndTime = endTime, TotalHoursGoal = goalHours };
       _goalsDatabase.UpdateCodingGoal(updatedCodingGoal);
       
       Input.ContinueMenu();
@@ -214,7 +215,7 @@ public class GoalMenu(CodingTrackerDatabase _trackerDatabase)
 
    private static void DisplayCodingGoalDetails(CodingGoal goal, double totalHours)
    {
-      var completedHoursPercentage = Math.Round((totalHours / goal.TotalHoursGoal) * 100, 2);
+      var completedHoursPercentage = Math.Round(totalHours / goal.TotalHoursGoal * 100, 2);
       var remainingHoursPercentage = Math.Round(100 - completedHoursPercentage, 2);
       
       if (ValidationService.DeadlinePassed(goal.EndTime))

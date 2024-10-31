@@ -208,8 +208,8 @@ public class MainMenu
         {
             Input.ContinueMenu();
             return;
-        };
-        
+        }
+
         Console.Clear();
         var codingSession = new CodingSession(stopwatchService.StartTime, stopwatchService.EndTime);
         _database.InsertCodingSession(codingSession);
@@ -290,7 +290,7 @@ public class MainMenu
         return false;
     }
 
-    private void BuildTableHeader(Table table)
+    private static void BuildTableHeader(Table table)
     {
         table.AddColumn(new TableColumn("[yellow]Id[/]").Centered());
         table.AddColumn(new TableColumn("[yellow]StartTime[/]").Centered());
@@ -298,12 +298,12 @@ public class MainMenu
         table.AddColumn(new TableColumn("[yellow]Duration (hrs)[/]").Centered());
     }
     
-    private void BuildTableRows(Table table, CodingSession codingSession)
+    private static void BuildTableRows(Table table, CodingSession codingSession)
     {
         table.AddRow($"[blue]{codingSession.Id}[/]", $"[blue]{codingSession.StartTime}[/]", $"[blue]{codingSession.EndTime}[/]", $"[blue]{codingSession.Duration}[/]");
     }
 
-    private void DisplayCodingSessions(List<CodingSession> sessions, string title)
+    private static void DisplayCodingSessions(List<CodingSession> sessions, string title)
     {
         var panel = new Panel(title)
         {

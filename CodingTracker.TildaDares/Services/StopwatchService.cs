@@ -7,7 +7,7 @@ namespace CodingTracker.TildaDares.Services;
 
 public class StopwatchService
 {
-    private static readonly string DateFormat = ConfigurationManager.AppSettings["dateFormat"];
+    private static readonly string? DateFormat = ConfigurationManager.AppSettings["dateFormat"];
     private readonly Stopwatch _stopwatch = new();
     public DateTime StartTime { get; private set; }
     public DateTime EndTime { get; private set; }
